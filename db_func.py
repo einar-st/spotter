@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 import pypyodbc as odbc
-# from sql_cred import username, password
 import os
 
 
@@ -17,6 +16,12 @@ def exists(table: str, column: str, value: str):
         f'SELECT {column} FROM [{schema}].[{table}] WHERE {column} = ?', value)
     row = res.fetchone()
     return bool(row)
+
+
+def run_query(query, params):
+
+    cursor.execute(query, params)
+    cursor.commit()
 
 
 def insert_query(table: str, values: list):
@@ -108,37 +113,20 @@ def insert_track(track_obj: str, audio_features, album_obj: str,
     return result
 
 
-def run_query(query, params):
-    # try:
-    cursor.execute(query, params)
-    cursor.commit()
-    # print('INSERTED')
-    # except odbc.IntegrityError:
-    #     print('Failed to insert..')
-    #     pass
-
+load_dotenv()
 
 # database schema
 schema = 'sp'
 
 # connection settings
-driver = 'FreeTDS'
-server = 'eqs.database.windows.net'
-database = 'db'
-port = ";PORT=1433"
-# version = ";TDS_VERSION=7.3"
-version = ";TDS_VERSION=8.0"
-
 con = odbc.connect(
-    "DRIVER=" + driver
-    + ";SERVER=" + server
-    + ";DATABASE=" + database
+    "DRIVER=" + 'FreeTDS'
+    + ";SERVER=" + 'eqs.database.windows.net'
+    + ";DATABASE=" + 'db'
     + ";UID=" + os.getenv('DB_USR')
     + ";PWD=" + os.getenv('DB_PWD')
-    + port
-    + version
+    + ";PORT=1433"
+
 )
 
 cursor = con.cursor()
-
-load_dotenv()
