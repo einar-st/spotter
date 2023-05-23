@@ -36,7 +36,7 @@ def insert_query(table: str, values: list):
 
     print(", ".join(params), '->', table)
 
-    run_query(query, params)
+    # run_query(query, params)
 
 
 def insert_track(track_obj: str, audio_features, album_obj: str,

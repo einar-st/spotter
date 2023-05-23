@@ -24,19 +24,18 @@ recommendations = spf.get_recommendations(
 
 for i, track in enumerate(recommendations):
 
-    track_obj = track[0]
-
     # ignore tracks with names longer than 127 due to Linux UTF bug
     # https://github.com/jiangwen365/pypyodbc/issues/27
-    if len(track_obj[1]) < 128:
-        track_obj = spf.get_object(spf.token, track[0], 'track')
+    if len(track['id']) < 128:
+        track_obj = spf.get_object(spf.token, track['id'], 'track')
         artist_names = ', '.join(
             artist['name'] for artist in track_obj['artists'])
         print('')
-        print(f"{artist_names} - {track_obj['name']}, {today}")
+        print(f"{1.} {artist_names} - {track_obj['name']}")
         print('==========')
-        if track[0] not in db_values['track_ids']:
-            audio_features = spf.get_audio_features(spf.token, track[0])
+        if track['id'] not in db_values['track_ids']:
+            audio_features = spf.get_audio_features(spf.token, track['id'])
+
             album_obj = spf.get_object(
                 spf.token, track_obj['album']['id'], 'album')
             artist_objs = []
@@ -66,3 +65,6 @@ for i, track in enumerate(recommendations):
 
         # avoid rate limit timeout
         # time.sleep(2)
+
+print('')
+print(f'Songs for {today} successfully collected..')

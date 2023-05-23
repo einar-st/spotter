@@ -10,11 +10,6 @@ client_id = os.getenv('CLIENT_ID')
 client_secret = os.getenv('CLIENT_SECRET')
 
 
-def cls():
-
-    os.system('clear')
-
-
 def get_token():
 
     auth_string = client_id + ':' + client_secret
@@ -41,64 +36,81 @@ def get_auth_header(token):
 def search(token, query, type):
 
     url_base = 'https://api.spotify.com/v1/search'
-    params = f'?q={query}&type={type}'
+    params = f'?q={query}&type={type}&limit=10'
     url = url_base + params
     headers = get_auth_header(token)
-    result = get(url, headers=headers)
-    json_result = json.loads(result.content)[f'{type}s']['items']
+    json_object = get(url, headers=headers)
+    result = json.loads(json_object.content)[f'{type}s']['items']
 
     try:
-        return json_result
+        return result
     except IndexError:
         print('No result found')
 
     return None
 
 
-# def item_search(token, type):
+def select_args(token):
 
-#     artist_prompt = input('Search: ')
-#     print('')
-#     search_query = search(token, artist_prompt, type)
+    def add_item(token, type):
+        query = input('Enter search: ')
+        search_obj = search(token, query, type)
 
-#     items = []
+        item_ids = []
 
-#     for item in search_query:
-#         if type == 'artist':
-#             # do not show list if perfect hit
-#             if item['name'].lower() == artist_prompt.lower():
-#                 return (item['name'])
-#             elif item['name'] not in items:
-#                 items.append(item['name'])
-#             else:
-#                 search_query.remove(item)
-#         else:
-#             if item['name'] not in items:
-#                 items.append(item['artists'][0]['name'] + item['name'])
-#             else:
-#                 search_query.remove(item)
+        for i, item in enumerate(search_obj, 1):
+            artist_name = ''
+            if type == 'track':
+                artist_name = item["artists"][0]["name"] + ' - '
+            else:
+                # for 'artist' return first hit if direct match
+                if i == 1 and query.lower() == item['name'].lower():
+                    return item['id']
+            print(f"{i}. {item['id']} {artist_name}{item['name']}")
+            item_ids.append(item['id'])
 
-#     # limit list
-#     limit = {'artist': 5, 'track': 10}
-#     for i, item in enumerate(search_query, 1):
-#         if i <= limit[type]:
-#             print(str(i) + '.', item['name'])
+        pick = int(input('Select item: '))
 
-#     # print(search_query)
-#     print('')
-#     idx = input('Select: ')
+        return item_ids[pick - 1]
 
-#     object = search_query[int(idx) - 1]
-#     artist_names = []
-#     if type == 'track':
-#         artist_names = [item['name'] for item in object['artists']]
-#     ret = {
-#         'artist': (object['id'], object['name']),
-#         'track': (
-#             object['id'], f'{", ".join(artist_names)} - {object["name"]}')
-#     }
+    result = {
+        'artist': [],
+        'track': [],
+        'genre': []
+    }
+    genres = None
 
-#     return ret[type]
+    while True:
+
+        print('- Add parameter -')
+        print('1. Artist 2. Track 3. Genre 4. Valid genres')
+        add_type = int(input('Select : '))
+        print('')
+
+        s_type = {1: 'artist', 2: 'track'}
+        if add_type in (1, 2):
+            result[s_type[add_type]].append(add_item(token, s_type[add_type]))
+        elif add_type == 3:
+            genre = input('Enter genre: ')
+            if genres is None:
+                genres = get_all_genres(token)
+            if genre in genres:
+                result['genre'].append(genre)
+            else:
+                print(f'{genre} not a valid genre. Pick one of the following.')
+                print(genres)
+        elif add_type == 4:
+            if genres is None:
+                genres = get_all_genres(token)
+            print(genres)
+        elif add_type == 5:
+            break
+
+        print('')
+        print(result)  # return tuple of artists, tracks, genres
+        print('')
+
+    return result
 
 
 def get_object(token, id, type):
@@ -172,12 +184,10 @@ def get_recommendations(token, artists: str, genres: str, tracks: str):
     market = '&market=NO'
     url = url_base + artists + genres + tracks + market + limit
     headers = get_auth_header(token)
-    result = get(url, headers=headers)
-    json_result = json.loads(result.content)['tracks']
-    lst = []
-    for track in json_result:
-        lst.append((track['id'], track['name']))
-    return lst
+    json_object = get(url, headers=headers)
+    result = json.loads(json_object.content)['tracks']
+
+    return result
 
 
 def get_all_genres(token):
