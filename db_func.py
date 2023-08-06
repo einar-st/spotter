@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-# import pypyodbc as odbc
 import mysql.connector
 import os
 
@@ -10,26 +9,19 @@ def get_db_values(table, column):
     return [item[0] for item in cursor.fetchall()]
 
 
-def run_query(query, params):
-
-    cursor.execute(query, params)
-    # cursor.commit()
-
-
 def insert_query(table: str, values: list):
 
     # skip if no values
     if len(values) == 0:
         return
 
-    # q = ['?' for _ in values]
     s_values = '%s, ' * len(values)
     query = f"INSERT INTO {schema}.{table} VALUES ({s_values[:-2]})"
     # values_str = [str(value) for value in values]
     # print(", ".join(values_str), '->', table)
-    print('Data added to ', table)
+    print('Data added to', table)
 
-    run_query(query, values)
+    cursor.execute(query, values)
 
 
 def insert_track(track_obj: str, audio_features, album_obj: str,
@@ -43,7 +35,7 @@ def insert_track(track_obj: str, audio_features, album_obj: str,
         'genres': []
     }
 
-    # collect objects with API
+    # collect objects with Spotify API
 
     # album
     if album_obj['id'] not in db_values['album_ids']:
@@ -111,16 +103,6 @@ load_dotenv()
 # database schema
 schema = 'sp'
 
-# connection settings
-# cnx = odbc.connect(
-#     "DRIVER=" + 'FreeTDS'
-#     + ";SERVER=" + 'eqs.database.windows.net'
-#     + ";DATABASE=" + 'db'
-#     + ";UID=" + os.getenv('DB_USR')
-#     + ";PWD=" + os.getenv('DB_PWD')
-#     + ";PORT=1433"
-
-# )
 cnx = mysql.connector.MySQLConnection(
     host='localhost',
     database='sp',

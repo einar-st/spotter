@@ -12,7 +12,6 @@ db_values = {
     'genres': dbf.get_db_values('genre', 'genre')
 }
 
-# set date value
 today = str(date.today())
 arguments = ['5K4W6rqBFWDnAN6FQUkS6x,3nFkdlSjzX9mRTtwJOzDYB',
              '0j2T0R9dR9qdJYsB7ciXhf', 'hip-hop']
@@ -21,13 +20,7 @@ recommendations = spf.get_recommendations(
 )
 
 # fetch track information for all recommendations
-
 for i, track in enumerate(recommendations):
-
-    # ignore tracks with names longer than 127 due to Linux UTF bug
-    # https://github.com/jiangwen365/pypyodbc/issues/27
-    # if len(track['id']) < 128:
-    # probably fixed with mssql -> mysql
 
     track_obj = spf.get_object(spf.token, track['id'], 'track')
     artist_names = ', '.join(
