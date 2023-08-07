@@ -5,7 +5,8 @@ import os
 
 def get_db_values(table, column):
 
-    cursor.execute(f'SELECT {column} FROM {schema}.{table}')
+    # cursor.execute(f'SELECT {column} FROM {schema}.{table}')
+    cursor.execute(f'SELECT {column} FROM {table}')
     return [item[0] for item in cursor.fetchall()]
 
 
@@ -16,10 +17,9 @@ def insert_query(table: str, values: list):
         return
 
     s_values = '%s, ' * len(values)
-    query = f"INSERT INTO {schema}.{table} VALUES ({s_values[:-2]})"
+    query = f"INSERT INTO {table} VALUES ({s_values[:-2]})"
     # values_str = [str(value) for value in values]
     # print(", ".join(values_str), '->', table)
-    print('Data added to', table)
 
     cursor.execute(query, values)
 
@@ -39,12 +39,10 @@ def insert_track(track_obj: str, audio_features, album_obj: str,
 
     # album
     if album_obj['id'] not in db_values['album_ids']:
-        insert_query(
-            'album',
-            [album_obj['id'],
-                album_obj['name'],
-                album_obj['release_date']]
-        )
+        album_vars = [
+            album_obj['id'], album_obj['name'], album_obj['release_date'][:4]
+        ]
+        insert_query('album', album_vars)
         result['album_ids'].append(album_obj['id'])
     else:
         print('Album exists')
@@ -100,14 +98,11 @@ def insert_track(track_obj: str, audio_features, album_obj: str,
 
 load_dotenv()
 
-# database schema
-schema = 'sp'
-
 cnx = mysql.connector.MySQLConnection(
-    host='localhost',
-    database='sp',
-    user=os.getenv('DB_USR'),
-    password=os.getenv('DB_PWD')
+    host=os.getenv('DB_HOST'),
+    database=os.getenv('DB_DATABASE'),
+    user=os.getenv('DB_USER'),
+    password=os.getenv('DB_PASSWORD')
 )
 
 cursor = cnx.cursor()

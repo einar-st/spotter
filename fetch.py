@@ -56,16 +56,13 @@ for i, track in enumerate(recommendations):
         except dbf.mysql.connector.IntegrityError:
             pass
     # track_date
-    try:
-        dbf.insert_query(
-            'track_date',
-            [0] + [track_obj['id'], today]
-        )
-    except dbf.mysql.connector.DataError:
-        pass
+    dbf.insert_query(
+        'track_date',
+        [0] + [track_obj['id'], today]
+    )
 
     # avoid rate limit timeout
-    time.sleep(2)
+    time.sleep(1)
 
 dbf.cnx.commit()
 dbf.cnx.close()

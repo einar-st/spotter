@@ -32,7 +32,7 @@ CREATE TABLE `sp`.`artist` (
 CREATE TABLE `sp`.`album` (
   `album_id` char(22) PRIMARY KEY NOT NULL,
   `name` varchar(255) NOT NULL,
-  `release_date` date
+  `release_year` year
 );
 
 CREATE TABLE `sp`.`artist_genre` (
