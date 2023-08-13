@@ -6,13 +6,13 @@ CREATE TABLE `sp`.`track` (
   `album_id` char(22),
   `duration_ms` int,
   `popularity` tinyint,
-  `explicit` bit,
+  `explicit` bool,
   `acousticness` decimal(4,3),
   `danceability` decimal(4,3),
   `energy` decimal(4,3),
   `instrumentalness` decimal(4,3),
   `liveness` decimal(4,3),
-  `mode` bit,
+  `mode` bool,
   `time_signature` decimal(6,3),
   `valence` decimal(4,3)
 );
@@ -57,6 +57,18 @@ CREATE TABLE `sp`.`date` (
   `date` date UNIQUE NOT NULL
 );
 
+CREATE TABLE `sp`.`date_parameter` (
+  `link_id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `date` date NOT NULL,
+  `param_id` int NOT NULL
+);
+
+CREATE TABLE `sp`.`parameter` (
+  `param_id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `param_value` varchar(255) UNIQUE NOT NULL,
+  `param_type` char(3) NOT NULL
+);
+
 CREATE INDEX `track_index_0` ON `sp`.`track` (`album_id`);
 
 CREATE INDEX `track_artist_index_1` ON `sp`.`track_artist` (`track_id`);
@@ -84,3 +96,7 @@ ALTER TABLE `sp`.`artist_genre` ADD FOREIGN KEY (`artist_id`) REFERENCES `sp`.`a
 ALTER TABLE `sp`.`track_date` ADD FOREIGN KEY (`date`) REFERENCES `sp`.`date` (`date`);
 
 ALTER TABLE `sp`.`track_date` ADD FOREIGN KEY (`track_id`) REFERENCES `sp`.`track` (`track_id`);
+
+ALTER TABLE `sp`.`date_parameter` ADD FOREIGN KEY (`date`) REFERENCES `sp`.`date` (`date`);
+
+ALTER TABLE `sp`.`date_parameter` ADD FOREIGN KEY (`param_id`) REFERENCES `sp`.`parameter` (`param_id`);

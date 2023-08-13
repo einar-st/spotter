@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Spotter</title>
+</head>
+
+<body>
+  <h1>{{header}}</h1>
+  <a href="{{previous}}">previous day</a>
+  {% if next != "" %}
+  | <a href="{{next}}">next day</a>
+  {% endif %}
+  <p> {{today}} </p>
+  <p>
+    {% for line in lines %}
+    {{line}}<br>
+    {% endfor %}
+  </p>
+</body>
+
+</html>
