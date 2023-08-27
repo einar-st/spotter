@@ -166,7 +166,7 @@ def get_recommendations(token, artists: str, genres: str, tracks: str):
     artists = f"?seed_artists={artists}"
     genres = f"&seed_genres={genres}"
     tracks = f"&seed_tracks={tracks}"
-    limit = "&limit=5"
+    limit = "&limit=25"
     market = "&market=NO"
     url = url_base + artists + genres + tracks + market + limit
     headers = get_auth_header(token)

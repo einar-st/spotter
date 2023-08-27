@@ -2,13 +2,14 @@ import sys
 from datetime import date, timedelta
 import db_func as dbf
 
+# original parameters (Jay-Z, Kanye, Bigger Stronger blabla)
 # artist_params = ["5K4W6rqBFWDnAN6FQUkS6x", "3nFkdlSjzX9mRTtwJOzDYB"]
 # track_params = ["0j2T0R9dR9qdJYsB7ciXhf"]
 # genre_params = ["hip-hop"]
 
-artist_params = ['1bgoHMYkNqVC9PTOrQECts', "7oPftvlwr6VrsViSDV7fJY"]
+artist_params = ["1bgoHMYkNqVC9PTOrQECts", "7oPftvlwr6VrsViSDV7fJY"]
 track_params = ["3EzFY9Rg0PpbADMth746zi", "2sIWM1FzNqLCccNwXuC4SA"]
-genre_params = ["pop"]
+genre_params = ["indie"]
 
 today = date.today()
 
