@@ -1,5 +1,5 @@
 FROM mysql:latest
 
-COPY db/schema.sql /docker-entrypoint-initdb.d/data.sql
+COPY db/setup.sql /docker-entrypoint-initdb.d/setup.sql
 
 EXPOSE 3306
